@@ -22,26 +22,81 @@
 		ideal = $store.ideal;
 		nadir = $store.nadir;
 	}
+
+	// Function to get solution and update the store
+	const getDetails = async () => {
+		try {
+			const response = await axios.post('http://127.0.0.1:5000/get_details_problem');
+			store.update((state) => ({
+				...state,
+				ideal: response.data.ideal,
+				nadir: response.data.nadir,
+				referencePoint: response.data.ideal // assuming you want to initialize referencePoint with ideal
+			}));
+		} catch (error) {
+			console.error('Error fetching solution:', error);
+		}
+	};
+
+	// Function to get solution and update the store
+	const getSolution = async () => {
+		try {
+			// Get current reference point from the store
+			const response = await axios.post('http://127.0.0.1:5000/get_solution', {
+				reference_point: referencePoint
+			});
+
+			// Update the store with new data
+			store.update((state) => ({
+				...state,
+				lagrangeMultipliers: response.data.lagrange_multipliers,
+				partialTradeoffs: response.data.partial_tradeoffs,
+				fx: response.data.fx
+			}));
+		} catch (error) {
+			console.error('Error fetching solution:', error);
+		}
+	};
+
+	// Function to update reference point in the store
+	function updateReferencePoint(index: number, value: number) {
+		store.update((state) => {
+			const newReferencePoint = [...state.referencePoint];
+			newReferencePoint[index] = value;
+			return { ...state, referencePoint: newReferencePoint };
+		});
+	}
+
+	onMount(() => {
+		getDetails();
+	});
 </script>
 
 <div class="container">
-	<h2>Trade offs</h2>
-	<div class="table-container">
-		<!-- Native Table Element -->
-		<table class="table table-hover">
-			<thead>
-				<tr>
-					{#each Array(numObjectives).fill(undefined) as _, index}
-						<th>Objective {index + 1}</th>
+	<div>
+		<h3>Partial Tradeoffs</h3>
+		<div class="table-container">
+			<!-- Native Table Element -->
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>-</th>
+						{#each Array(numObjectives).fill(undefined) as _, index}
+							<th>Objective {index + 1}</th>
+						{/each}
+					</tr>
+				</thead>
+				<tbody>
+					{#each $store.partialTradeoffs as row, i}
+						<tr>
+							<td>Objective {i + 1}</td>
+							{#each row as tradeoff, j}
+								<td>{tradeoff}</td>
+							{/each}
+						</tr>
 					{/each}
-				</tr>
-			</thead>
-			<tbody>
-				<tr> </tr>
-				{#each $store.fx as f}
-					<td>{f}</td>
-				{/each}
-			</tbody>
-		</table>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </div>
