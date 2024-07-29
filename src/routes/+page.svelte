@@ -5,6 +5,7 @@
 	import { store } from '$lib/store';
 	import DynamicTable from '$lib/components/DynamicTable.svelte';
 	import RadarChart from '$lib/components/visual/RadarChart.svelte';
+	import BarChart from '$lib/components/visual/BarChart.svelte';
 
 	let numObjectives: number;
 	let referencePoint: number[] | undefined;
@@ -73,21 +74,14 @@
 			</div>
 			<div class="card" style="width:60vh; background-color:white">
 				<header class="card-header">Influence from each objective</header>
-				<section style="height:40vh; width:60vh"></section>
+				<section style="height:40vh; width:60vh">
+					<BarChart
+						indicatorNames={['Objective1', 'Objective2', 'Objective3', 'Objective4']}
+						values={lagrangeMultipliers}
+					></BarChart>
+				</section>
 			</div>
 		</div>
-		<DynamicTable
-			title="Multipliers"
-			tableHeader={objective_names}
-			tableData={[lagrangeMultipliers]}
-			decimalPlaces={decimal_places}
-		></DynamicTable>
-		<DynamicTable
-			title="Obtained solution"
-			tableHeader={objective_names}
-			tableData={[fx]}
-			decimalPlaces={decimal_places}
-		></DynamicTable>
 		<DynamicTable
 			title="Trade offs"
 			tableHeader={objective_names}
