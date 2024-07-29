@@ -41,7 +41,9 @@
   "type": "module",
   "dependencies": {
     "@floating-ui/dom": "1.6.8",
+    "@types/echarts": "^4.9.22",
     "axios": "^1.7.2",
+    "echarts": "^5.5.1",
     "highlight.js": "11.10.0",
     "unplugin-icons": "^0.12.8"
   }

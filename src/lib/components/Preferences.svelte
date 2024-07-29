@@ -1,42 +1,29 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import axios from 'axios';
 	import { store } from '$lib/store';
-	import { RangeSlider } from '@skeletonlabs/skeleton';
+	import { onMount } from 'svelte';
 	let numObjectives: number;
 	let referencePoint: number[];
 	let lagrangeMultipliers: number[];
 	let partialTradeoffs: number[][];
-	let fx: number[];
-	let ideal: number[];
-	let nadir: number[];
+	let fx: number[] | undefined = undefined;
+	let ideal: number[] | undefined;
+	let nadir: number[] | undefined;
+	let objective_names: string[];
+	let decimal_places: number;
 
 	// Subscribe to the store
 	$: {
 		$store;
 		numObjectives = $store.numObjectives;
-		referencePoint = $store.referencePoint;
 		lagrangeMultipliers = $store.lagrangeMultipliers;
 		partialTradeoffs = $store.partialTradeoffs;
 		fx = $store.fx;
 		ideal = $store.ideal;
 		nadir = $store.nadir;
+		objective_names = $store.objective_names;
+		decimal_places = $store.decimal_places;
 	}
-
-	// Function to get solution and update the store
-	const getDetails = async () => {
-		try {
-			const response = await axios.post('http://127.0.0.1:5000/get_details_problem');
-			store.update((state) => ({
-				...state,
-				ideal: response.data.ideal,
-				nadir: response.data.nadir,
-				referencePoint: response.data.ideal // assuming you want to initialize referencePoint with ideal
-			}));
-		} catch (error) {
-			console.error('Error fetching solution:', error);
-		}
-	};
 
 	// Function to get solution and update the store
 	const getSolution = async () => {
@@ -58,18 +45,28 @@
 		}
 	};
 
-	// Function to update reference point in the store
-	function updateReferencePoint(index: number, value: number) {
-		store.update((state) => {
-			const newReferencePoint = [...state.referencePoint];
-			newReferencePoint[index] = value;
-			return { ...state, referencePoint: newReferencePoint };
-		});
+	// Initialize referencePoint with the same values as ideal if undefined
+	$: if (referencePoint === undefined && ideal) {
+		referencePoint = [...ideal];
+		store.update((state) => ({ ...state, referencePoint }));
 	}
 
 	onMount(() => {
-		getDetails();
+		// Ensure referencePoint is initialized when the component mounts
+		if (referencePoint === undefined && ideal) {
+			referencePoint = [...ideal];
+			store.update((state) => ({ ...state, referencePoint }));
+		}
 	});
+
+	// Function to update reference point in the store
+	function updateReferencePoint(index: number, value: number) {
+		store.update((state) => {
+			const newReferencePoint = state.referencePoint ? [...state.referencePoint] : [];
+			newReferencePoint[index] = value; // Update the specific index with the new value
+			return { ...state, referencePoint: newReferencePoint };
+		});
+	}
 </script>
 
 <div class="container">
@@ -79,32 +76,35 @@
 		<div class="grid-container">
 			{#each Array(numObjectives).fill(undefined) as _, index}
 				<div class="label">
-					<label for="reference-{index}">Objective {index + 1}</label>
+					<label for="reference-{index}">{$store.objective_names[index]}</label>
 				</div>
-				<div class="ideal text-sm">Ideal: {$store.ideal[index]}</div>
-				<div class="nadir text-sm">Nadir: {$store.nadir[index]}</div>
-				<div class="slider self-center">
-					<input
-						type="range"
-						id="slider-{index}"
-						step="0.00001"
-						min={ideal[index]}
-						max={nadir[index]}
-						class="input"
-						bind:value={$store.referencePoint[index]}
-						on:input={() => updateReferencePoint(index, $store.referencePoint[index])}
-					/>
-				</div>
-				<div class="input">
-					<input
-						type="number"
-						id="reference-{index}"
-						step="0.00001"
-						class="input"
-						bind:value={$store.referencePoint[index]}
-						on:input={() => updateReferencePoint(index, $store.referencePoint[index])}
-					/>
-				</div>
+				{#if ideal != undefined && nadir != undefined}
+					<div class="ideal text-sm">Ideal: {ideal[index].toFixed(decimal_places)}</div>
+					<div class="nadir text-sm">Nadir: {nadir[index].toFixed(decimal_places)}</div>
+
+					<div class="slider self-center">
+						<input
+							type="range"
+							id="slider-{index}"
+							step="0.00001"
+							min={ideal[index].toFixed(decimal_places)}
+							max={nadir[index].toFixed(decimal_places)}
+							class="input"
+							bind:value={referencePoint[index]}
+							on:input={() => updateReferencePoint(index, referencePoint[index])}
+						/>
+					</div>
+					<div class="input">
+						<input
+							type="number"
+							id="reference-{index}"
+							step="0.00001"
+							class="input"
+							bind:value={referencePoint[index]}
+							on:input={() => updateReferencePoint(index, referencePoint[index])}
+						/>
+					</div>
+				{/if}
 			{/each}
 		</div>
 		<button type="submit" class="btn variant-filled">Get Solution</button>
