@@ -65,13 +65,13 @@
 	{:else}
 		<div class="grid grid-cols-2 gap-2">
 			<div class="card" style="width:60vh; background-color:white">
-				<header class="card-header">Obtained solution</header>
+				<header class="card-header h5">Obtained solution</header>
 				<section style="height:40vh; width:60vh">
 					<RadarChart indicatorNames={objective_names} values={[fx]} />
 				</section>
 			</div>
 			<div class="card" style="width:60vh; background-color:white">
-				<header class="card-header">Influence from each objective</header>
+				<header class="card-header h5">Influence from each objective</header>
 				<section style="height:40vh; width:60vh">
 					<BarChart
 						indicatorNames={objective_names}
@@ -84,7 +84,7 @@
 		</div>
 		<div class="grid grid-cols-2 gap-2">
 			<div class="card" style="width:60vh; background-color:white">
-				<header class="card-header">
+				<header class="card-header h5">
 					Partial tradeoffs for objective {objective_names[selected_objective[0]]}
 				</header>
 				<section style="height:40vh; width:60vh">
@@ -98,7 +98,7 @@
 				</section>
 			</div>
 			<div class="card" style="width:60vh; background-color:white">
-				<header class="card-header">Analysis</header>
+				<header class="card-header h5">Analysis</header>
 				<section class="p-4" style="height:40vh; width:60vh">
 					<ul>
 						<li>Obtained solution: {fx}</li>
