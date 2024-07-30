@@ -93,6 +93,7 @@
 			data: { value: number[] };
 		}) {
 			selectedIndices = handleClickSelection(chart, params, selectedIndices, maxSelections);
+			console.log(selectedIndices[0]);
 		},
 		mouseover: function (params: { dataIndex: number }) {
 			highlightedIndex = params.dataIndex;

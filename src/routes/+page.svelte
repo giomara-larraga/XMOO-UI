@@ -1,11 +1,10 @@
 <script lang="ts">
-	import TableTradeoffs from '$lib/components/Table_tradeoffs.svelte';
 	import { onMount } from 'svelte';
 	import axios from 'axios';
 	import { store } from '$lib/store';
-	import DynamicTable from '$lib/components/DynamicTable.svelte';
 	import RadarChart from '$lib/components/visual/RadarChart.svelte';
 	import BarChart from '$lib/components/visual/BarChart.svelte';
+	import DynamicTable from '$lib/components/DynamicTable.svelte';
 
 	let numObjectives: number;
 	let referencePoint: number[] | undefined;
@@ -16,7 +15,7 @@
 	let nadir: number[] | undefined;
 	let objective_names: string[];
 	let decimal_places: number;
-
+	let selected_objective: number[];
 	// Subscribe to the store
 	$: {
 		$store;
@@ -55,6 +54,7 @@
 
 	onMount(() => {
 		getDetails();
+		selected_objective = [-1];
 	});
 </script>
 
@@ -62,7 +62,7 @@
 	{#if fx == undefined}
 		<p>Click on compute to see results</p>
 	{:else}
-		<div class="grid grid-cols-2 gap-4">
+		<div class="grid grid-cols-2 gap-2">
 			<div class="card" style="width:60vh; background-color:white">
 				<header class="card-header">Obtained solution</header>
 				<section style="height:40vh; width:60vh">
@@ -78,16 +78,46 @@
 					<BarChart
 						indicatorNames={['Objective1', 'Objective2', 'Objective3', 'Objective4']}
 						values={lagrangeMultipliers}
+						maxSelections={1}
+						bind:selectedIndices={selected_objective}
 					></BarChart>
 				</section>
 			</div>
 		</div>
-		<DynamicTable
+		<div class="grid grid-cols-2 gap-2">
+			<div class="card" style="width:60vh; background-color:white">
+				<header class="card-header">Partial tradeoffs for objective {selected_objective}</header>
+				<section style="height:40vh; width:60vh">
+					{#if selected_objective != undefined && selected_objective[0] > -1}
+						<DynamicTable
+							title="Trade offs"
+							tableHeader={objective_names}
+							tableData={[partialTradeoffs[selected_objective[0]]]}
+							decimalPlaces={decimal_places}
+						></DynamicTable>
+					{/if}
+				</section>
+			</div>
+			<div class="card" style="width:60vh; background-color:white">
+				<header class="card-header">Analysis</header>
+				<section class="p-4" style="height:40vh; width:60vh">
+					<ul>
+						<li>Obtained solution: {fx}</li>
+						<li>Objective to improve: {selected_objective}</li>
+						<li>Amount of improvement:</li>
+						<li>Value of tradeoff:</li>
+						<li>Approximated solution:</li>
+						<li>Difference between solutions:</li>
+					</ul>
+				</section>
+			</div>
+		</div>
+		<!-- 		<DynamicTable
 			title="Trade offs"
 			tableHeader={objective_names}
 			tableData={partialTradeoffs}
 			decimalPlaces={decimal_places}
 		></DynamicTable>
-		<TableTradeoffs></TableTradeoffs>
+		<TableTradeoffs></TableTradeoffs> -->
 	{/if}
 </div>

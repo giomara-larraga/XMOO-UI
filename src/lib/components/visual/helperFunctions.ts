@@ -17,7 +17,14 @@ export function handleClickSelection(
     selectedIndices.splice(selectedIndices.indexOf(params.dataIndex), 1);
   } else {
     // If it doesn't, add it to the array
-    selectedIndices = [...selectedIndices, params.dataIndex];
+    if (maxSelections!= undefined && maxSelections > 1){
+      selectedIndices = [...selectedIndices, params.dataIndex];
+    }
+    else
+    {
+      selectedIndices = [params.dataIndex];
+    }
+    
   }
   if (maxSelections == undefined) {
     // TODO: #32 This evaluates to the number of objectives. This is clearly not what we want. FIX THIS!
