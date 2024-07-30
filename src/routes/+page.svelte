@@ -5,6 +5,7 @@
 	import RadarChart from '$lib/components/visual/RadarChart.svelte';
 	import BarChart from '$lib/components/visual/BarChart.svelte';
 	import DynamicTable from '$lib/components/DynamicTable.svelte';
+	import BarChartHorizontal from '$lib/components/visual/BarChartHorizontal.svelte';
 
 	let numObjectives: number;
 	let referencePoint: number[] | undefined;
@@ -66,17 +67,14 @@
 			<div class="card" style="width:60vh; background-color:white">
 				<header class="card-header">Obtained solution</header>
 				<section style="height:40vh; width:60vh">
-					<RadarChart
-						indicatorNames={['Objective1', 'Objective2', 'Objective3', 'Objective4']}
-						values={[fx]}
-					/>
+					<RadarChart indicatorNames={objective_names} values={[fx]} />
 				</section>
 			</div>
 			<div class="card" style="width:60vh; background-color:white">
 				<header class="card-header">Influence from each objective</header>
 				<section style="height:40vh; width:60vh">
 					<BarChart
-						indicatorNames={['Objective1', 'Objective2', 'Objective3', 'Objective4']}
+						indicatorNames={objective_names}
 						values={lagrangeMultipliers}
 						maxSelections={1}
 						bind:selectedIndices={selected_objective}
@@ -86,15 +84,16 @@
 		</div>
 		<div class="grid grid-cols-2 gap-2">
 			<div class="card" style="width:60vh; background-color:white">
-				<header class="card-header">Partial tradeoffs for objective {selected_objective}</header>
+				<header class="card-header">
+					Partial tradeoffs for objective {objective_names[selected_objective[0]]}
+				</header>
 				<section style="height:40vh; width:60vh">
 					{#if selected_objective != undefined && selected_objective[0] > -1}
-						<DynamicTable
-							title="Trade offs"
-							tableHeader={objective_names}
-							tableData={[partialTradeoffs[selected_objective[0]]]}
-							decimalPlaces={decimal_places}
-						></DynamicTable>
+						<BarChartHorizontal
+							values={partialTradeoffs[selected_objective[0]]}
+							indicatorNames={objective_names}
+							bind:selectedIndices={selected_objective}
+						></BarChartHorizontal>
 					{/if}
 				</section>
 			</div>

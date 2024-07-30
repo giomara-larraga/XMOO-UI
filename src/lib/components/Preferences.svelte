@@ -67,6 +67,10 @@
 			return { ...state, referencePoint: newReferencePoint };
 		});
 	}
+
+	function analyzeSolution() {
+		alert('analyze');
+	}
 </script>
 
 <div class="container">
@@ -107,7 +111,10 @@
 				{/if}
 			{/each}
 		</div>
-		<button type="submit" class="btn variant-filled">Get Solution</button>
+		<div>
+			<button type="submit" class="btn variant-filled">Get Solution</button>
+			<button class="btn variant-filled" on:click={analyzeSolution}>Analyze</button>
+		</div>
 	</form>
 </div>
 
