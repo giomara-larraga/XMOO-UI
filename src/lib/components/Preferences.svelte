@@ -2,27 +2,31 @@
 	import axios from 'axios';
 	import { store } from '$lib/store';
 	import { onMount } from 'svelte';
-	let numObjectives: number;
-	let referencePoint: number[];
-	let lagrangeMultipliers: number[];
-	let partialTradeoffs: number[][];
+	let num_objectives: number;
+	let current_reference_point: number[] = [];
+	let lagrange_multipliers: number[];
+	let partial_tradeoffs: number[][];
 	let fx: number[] | undefined = undefined;
 	let ideal: number[] | undefined;
 	let nadir: number[] | undefined;
 	let objective_names: string[];
 	let decimal_places: number;
+	let potential_reference_point: number[] = [];
+	let approximated_solution: number[] = [];
 
 	// Subscribe to the store
 	$: {
 		$store;
-		numObjectives = $store.numObjectives;
-		lagrangeMultipliers = $store.lagrangeMultipliers;
-		partialTradeoffs = $store.partialTradeoffs;
+		num_objectives = $store.numObjectives;
+		lagrange_multipliers = $store.lagrangeMultipliers;
+		partial_tradeoffs = $store.partialTradeoffs;
 		fx = $store.fx;
 		ideal = $store.ideal;
 		nadir = $store.nadir;
 		objective_names = $store.objective_names;
 		decimal_places = $store.decimal_places;
+		current_reference_point = $store.referencePoint;
+		potential_reference_point = $store.potentialReferencePoint;
 	}
 
 	// Function to get solution and update the store
@@ -30,7 +34,7 @@
 		try {
 			// Get current reference point from the store
 			const response = await axios.post('http://127.0.0.1:5000/get_solution', {
-				reference_point: referencePoint
+				reference_point: potential_reference_point
 			});
 
 			// Update the store with new data
@@ -38,47 +42,83 @@
 				...state,
 				lagrangeMultipliers: response.data.lagrange_multipliers,
 				partialTradeoffs: response.data.partial_tradeoffs,
-				fx: response.data.fx
+				fx: response.data.fx,
+				approximated_solution: []
 			}));
+			// Format each value in fx to the specified number of decimal places
+			const newReferencePoint = response.data.fx.map((value: number) =>
+				parseFloat(value.toFixed(decimal_places))
+			);
+
+			const newReferencePoint2 = response.data.fx.map((value: number) =>
+				parseFloat(value.toFixed(decimal_places))
+			);
+
+			// Update referencePoint with the new fx values
+			if (response.data.fx) {
+				store.update((state) => {
+					//console.log('Updating current referencePoint to:', newReferencePoint);
+					return { ...state, referencePoint: newReferencePoint };
+				});
+				store.update((state) => {
+					//console.log('Updating current referencePoint to:', newReferencePoint2);
+					return { ...state, potentialReferencePoint: newReferencePoint2 };
+				});
+				//const newReferencePoint = [...response.data.fx]; // Create a new array to ensure reactivity
+				potential_reference_point = newReferencePoint2;
+				current_reference_point = newReferencePoint;
+				approximated_solution = [];
+			}
+			console.log('current', current_reference_point);
+
+			console.log('potential', potential_reference_point);
 		} catch (error) {
 			console.error('Error fetching solution:', error);
 		}
 	};
 
-	// Initialize referencePoint with the same values as ideal if undefined
-	$: if (referencePoint === undefined && ideal) {
-		referencePoint = [...ideal];
-		store.update((state) => ({ ...state, referencePoint }));
-	}
-
-	onMount(() => {
-		// Ensure referencePoint is initialized when the component mounts
-		if (referencePoint === undefined && ideal) {
-			referencePoint = [...ideal];
-			store.update((state) => ({ ...state, referencePoint }));
-		}
-	});
-
 	// Function to update reference point in the store
 	function updateReferencePoint(index: number, value: number) {
 		store.update((state) => {
-			const newReferencePoint = state.referencePoint ? [...state.referencePoint] : [];
+			const newReferencePoint = state.potentialReferencePoint
+				? [...state.potentialReferencePoint]
+				: [];
 			newReferencePoint[index] = value; // Update the specific index with the new value
-			return { ...state, referencePoint: newReferencePoint };
+			return { ...state, potentialReferencePoint: newReferencePoint };
 		});
+		//console.log('potential reference point', potential_reference_point);
+		//console.log('current reference point', current_reference_point);
 	}
 
-	function analyzeSolution() {
-		alert('analyze');
-	}
+	const analyzeSolution = async () => {
+		try {
+			// Get current reference point from the store
+			const response = await axios.post('http://127.0.0.1:5000/approximate_solution', {
+				reference_point: [...current_reference_point],
+				new_reference_point: [...potential_reference_point],
+				multipliers: lagrange_multipliers,
+				num_objectives: num_objectives
+			});
+			console.log('approximating with:', current_reference_point, potential_reference_point);
+			// Update the store with new data
+			store.update((state) => ({
+				...state,
+				approximated_solution: response.data.approximated_solution
+			}));
+			approximated_solution = response.data.approximated_solution;
+			console.log('approximated', approximated_solution);
+		} catch (error) {
+			console.error('Error fetching solution:', error);
+		}
+	};
 </script>
 
 <div class="container">
 	<h4 class="h4">Preference information</h4>
 	<br />
-	<form on:submit|preventDefault={getSolution} class="form">
+	<form class="form">
 		<div class="grid-container">
-			{#each Array(numObjectives).fill(undefined) as _, index}
+			{#each Array(num_objectives).fill(undefined) as _, index}
 				<div class="label">
 					<label for="reference-{index}">{$store.objective_names[index]}</label>
 				</div>
@@ -94,8 +134,8 @@
 							min={ideal[index].toFixed(decimal_places)}
 							max={nadir[index].toFixed(decimal_places)}
 							class="input"
-							bind:value={referencePoint[index]}
-							on:input={() => updateReferencePoint(index, referencePoint[index])}
+							bind:value={potential_reference_point[index]}
+							on:input={() => updateReferencePoint(index, potential_reference_point[index])}
 						/>
 					</div>
 					<div class="input">
@@ -104,15 +144,15 @@
 							id="reference-{index}"
 							step="0.00001"
 							class="input"
-							bind:value={referencePoint[index]}
-							on:input={() => updateReferencePoint(index, referencePoint[index])}
+							bind:value={potential_reference_point[index]}
+							on:input={() => updateReferencePoint(index, potential_reference_point[index])}
 						/>
 					</div>
 				{/if}
 			{/each}
 		</div>
 		<div>
-			<button type="submit" class="btn variant-filled">Get Solution</button>
+			<button class="btn variant-filled" on:click={getSolution}>Get Solution</button>
 			<button class="btn variant-filled" on:click={analyzeSolution}>Analyze</button>
 		</div>
 	</form>

@@ -8,7 +8,8 @@
 	import BarChartHorizontal from '$lib/components/visual/BarChartHorizontal.svelte';
 
 	let numObjectives: number;
-	let referencePoint: number[] | undefined;
+	let referencePoint: number[] = [];
+	let potentialReferencePoint: number[] = [];
 	let lagrangeMultipliers: number[];
 	let partialTradeoffs: number[][];
 	let fx: number[] | undefined;
@@ -17,11 +18,13 @@
 	let objective_names: string[];
 	let decimal_places: number;
 	let selected_objective: number[];
+	let approximated_solution: number[];
 	// Subscribe to the store
 	$: {
 		$store;
 		numObjectives = $store.numObjectives;
 		referencePoint = $store.referencePoint;
+		potentialReferencePoint = $store.potentialReferencePoint;
 		lagrangeMultipliers = $store.lagrangeMultipliers;
 		partialTradeoffs = $store.partialTradeoffs;
 		fx = $store.fx;
@@ -29,12 +32,19 @@
 		nadir = $store.nadir;
 		objective_names = $store.objective_names;
 		decimal_places = $store.decimal_places;
+		approximated_solution = $store.approximated_solution;
 	}
 
 	// Initialize referencePoint with the same values as ideal if undefined
-	$: if (referencePoint === undefined && ideal) {
-		referencePoint = [...ideal];
-		store.update((state) => ({ ...state, referencePoint }));
+	$: {
+		if (referencePoint.length === 0 && ideal) {
+			referencePoint = [...ideal];
+			store.update((state) => ({ ...state, referencePoint: referencePoint }));
+		}
+		if (potentialReferencePoint.length === 0 && ideal) {
+			potentialReferencePoint = [...ideal];
+			store.update((state) => ({ ...state, potentialReferencePoint: potentialReferencePoint }));
+		}
 	}
 
 	// Function to get solution and update the store
@@ -53,6 +63,19 @@
 		}
 	};
 
+	function getObjectivesToImproveImpair(potential_rp: number[], fx: number[]) {
+		const result: string[] = [];
+		for (let index = 0; index < potential_rp.length; index++) {
+			if (potential_rp[index] < fx[index]) {
+				result.push('Improve');
+			} else if (potential_rp[index] > fx[index]) {
+				result.push('Impair');
+			} else {
+				result.push('Keep');
+			}
+		}
+		return result;
+	}
 	onMount(() => {
 		getDetails();
 		selected_objective = [-1];
@@ -99,14 +122,25 @@
 			</div>
 			<div class="card" style="width:60vh; background-color:white">
 				<header class="card-header h5">Analysis</header>
-				<section class="p-4" style="height:40vh; width:60vh">
+				<section
+					class="p-4"
+					style="height:40vh; width:60vh; text-wrap: balance;overflow-wrap: break-word;"
+				>
 					<ul>
 						<li>Obtained solution: {fx}</li>
-						<li>Objective to improve: {selected_objective}</li>
-						<li>Amount of improvement:</li>
-						<li>Value of tradeoff:</li>
-						<li>Approximated solution:</li>
-						<li>Difference between solutions:</li>
+						<li>Approximated solution: {approximated_solution}</li>
+						{#if fx !== undefined && approximated_solution !== undefined}
+							<li>
+								Difference between solutions:
+								{approximated_solution.map((value, index) => {
+									if (fx !== undefined) {
+										// Extra check to ensure fx is defined
+										return value - fx[index];
+									}
+									return 0; // Fallback if fx is unexpectedly undefined (which shouldn't happen)
+								})}
+							</li>
+						{/if}
 					</ul>
 				</section>
 			</div>
