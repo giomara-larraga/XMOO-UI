@@ -32,7 +32,8 @@
 
 	let chart: echarts.EChartsType;
 	let option: EChartOption;
-
+	let maxValues = [6.34, 3.44487, 7.5, 0];
+	let minValues = [4.751, 2.85346, 0.32111, -9.70667];
 	$: if (selectedIndices && chart) {
 		handleSelectionChange(chart, selectedIndices, maxSelections);
 	}
@@ -43,22 +44,28 @@
 
 	$: {
 		// Create the indicator objects for the radar chart.
-		let indObjects: { name: string }[] = [];
-		indicatorNames.forEach((name) => {
-			indObjects.push({ name: name });
+		let indObjects: { name: string; max: number; min: number }[] = [];
+		indicatorNames.forEach((name, i) => {
+			indObjects.push({ name: name, max: maxValues[i], min: minValues[i] });
 		});
 
 		// Create the series data for the radar chart.
 
-		let seriesData: { value: number[]; name: string; symbol: string;}[] = [];
+		let seriesData: { value: number[]; name: string; symbol: string }[] = [];
 		for (let i = 0; i < values.length; i++) {
-			if (i ==0){
-				seriesData.push({ value: values[i].map(num => parseFloat(num.toFixed(5))), name: 'Obtained solution', symbol: 'circle'});
-			}
-			else {
-				if (values[i].length > 0){
-					seriesData.push({ value: values[i].map(num => parseFloat(num.toFixed(5))), name: 'Approximated solution', symbol: 'rect'});
-
+			if (i == 0) {
+				seriesData.push({
+					value: values[i].map((num) => parseFloat(num.toFixed(5))),
+					name: 'Obtained solution',
+					symbol: 'circle'
+				});
+			} else {
+				if (values[i].length > 0) {
+					seriesData.push({
+						value: values[i].map((num) => parseFloat(num.toFixed(5))),
+						name: 'Approximated solution',
+						symbol: 'rect'
+					});
 				}
 			}
 		}
@@ -67,13 +74,18 @@
 		option = {
 			tooltip: {},
 			color: ['#1f7095', '#07d2c9', '#56A3F1', '#FF917C'],
-			legend: {},
+			legend: { orient: 'vertical', left: 'left', top: 'top' },
 			radar: {
 				shape: 'circle',
 				indicator: indObjects,
 				scale: true,
+				//splitNumber: 1, // Force only one split to reduce the number of labels
+
 				axisLabel: {
-					show: true
+					show: false,
+					showMinLabel: false,
+					showMaxLabel: true,
+					hideOverlap: true
 				}
 			},
 			series: [

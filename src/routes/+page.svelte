@@ -82,7 +82,7 @@
 		<div class="grid gap-y-4 grid-rows-2">
 			<div class="grid gap-x-4 grid-cols-2">
 				<div class="card" style="background-color:white">
-					<header class="card-header h5">Obtained solution</header>
+					<header class="card-header h5">Solution(s)</header>
 					<section style="height:40vh; width:60wh">
 						<RadarChart indicatorNames={short_names} values={[fx, approximated_solution]} />
 					</section>
