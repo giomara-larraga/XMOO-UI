@@ -63,19 +63,7 @@
 		}
 	};
 
-	function getObjectivesToImproveImpair(potential_rp: number[], fx: number[]) {
-		const result: string[] = [];
-		for (let index = 0; index < potential_rp.length; index++) {
-			if (potential_rp[index] < fx[index]) {
-				result.push('Improve');
-			} else if (potential_rp[index] > fx[index]) {
-				result.push('Impair');
-			} else {
-				result.push('Keep');
-			}
-		}
-		return result;
-	}
+
 	onMount(() => {
 		getDetails();
 		selected_objective = [-1];

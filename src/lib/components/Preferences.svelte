@@ -89,7 +89,21 @@
 		//console.log('potential reference point', potential_reference_point);
 		//console.log('current reference point', current_reference_point);
 	}
-
+	function getObjectivesToImproveImpair(potential_rp: number[], fx: number[]| undefined) {
+		const result: string[] = [];
+		if (fx!=undefined){
+		for (let index = 0; index < potential_rp.length; index++) {
+			if (potential_rp[index] > fx[index]) {
+				result.push('Improve');
+			} else if (potential_rp[index] < fx[index]) {
+				result.push('Impair');
+			} else {
+				result.push('Keep');
+			}
+			}
+		}
+		return result;
+	}
 	const analyzeSolution = async () => {
 		try {
 			// Get current reference point from the store
@@ -107,6 +121,8 @@
 			}));
 			approximated_solution = response.data.approximated_solution;
 			console.log('approximated', approximated_solution);
+			let toimproveimpar = getObjectivesToImproveImpair([...potential_reference_point], [...current_reference_point]);
+			console.log(toimproveimpar);
 		} catch (error) {
 			console.error('Error fetching solution:', error);
 		}
@@ -131,8 +147,8 @@
 							type="range"
 							id="slider-{index}"
 							step="0.00001"
-							min={ideal[index].toFixed(decimal_places)}
-							max={nadir[index].toFixed(decimal_places)}
+							min={Math.min(nadir[index], ideal[index]).toFixed(decimal_places)}
+							max={Math.max(nadir[index], ideal[index]).toFixed(decimal_places)}
 							class="input"
 							bind:value={potential_reference_point[index]}
 							on:input={() => updateReferencePoint(index, potential_reference_point[index])}
