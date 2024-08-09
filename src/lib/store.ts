@@ -11,8 +11,10 @@ interface StoreState {
   ideal:number[] | undefined;
   nadir:number[] | undefined;
   objective_names: string[];
+  short_names: string[];
   decimal_places: number;
   approximated_solution: number[];
+  history_solutions: number[][];
 }
 
 // Define the number of objectives
@@ -29,6 +31,8 @@ export const store = writable<StoreState>({
   ideal: undefined,
   nadir: undefined,
   objective_names: Array(numObjectives).fill("Objective"),
+  short_names: [],
   decimal_places: 0,
   approximated_solution: [],
+  history_solutions: [],
 });

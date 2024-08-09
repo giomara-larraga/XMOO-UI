@@ -10,10 +10,11 @@
 	let ideal: number[] | undefined;
 	let nadir: number[] | undefined;
 	let objective_names: string[];
+	let short_names: string[];
 	let decimal_places: number;
 	let potential_reference_point: number[] = [];
 	let approximated_solution: number[] = [];
-
+	let history_solutions: number[][];
 	// Subscribe to the store
 	$: {
 		$store;
@@ -24,9 +25,11 @@
 		ideal = $store.ideal;
 		nadir = $store.nadir;
 		objective_names = $store.objective_names;
+		short_names = $store.short_names;
 		decimal_places = $store.decimal_places;
 		current_reference_point = $store.referencePoint;
 		potential_reference_point = $store.potentialReferencePoint;
+		history_solutions = $store.history_solutions;
 	}
 
 	// Function to get solution and update the store
@@ -43,6 +46,7 @@
 				lagrangeMultipliers: response.data.lagrange_multipliers,
 				partialTradeoffs: response.data.partial_tradeoffs,
 				fx: response.data.fx,
+				history_solutions: [...state.history_solutions, response.data.fx],				
 				approximated_solution: []
 			}));
 			// Format each value in fx to the specified number of decimal places
@@ -136,11 +140,12 @@
 		<div class="grid-container">
 			{#each Array(num_objectives).fill(undefined) as _, index}
 				<div class="label">
-					<label for="reference-{index}">{$store.objective_names[index]}</label>
+					<label for="reference-{index}">{$store.objective_names[index]} ({$store.short_names[index]})</label>
 				</div>
 				{#if ideal != undefined && nadir != undefined}
+				<div class="nadir text-sm">Nadir: {nadir[index].toFixed(decimal_places)}</div>
 					<div class="ideal text-sm">Ideal: {ideal[index].toFixed(decimal_places)}</div>
-					<div class="nadir text-sm">Nadir: {nadir[index].toFixed(decimal_places)}</div>
+					
 
 					<div class="slider self-center">
 						<input
