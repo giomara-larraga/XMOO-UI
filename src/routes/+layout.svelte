@@ -33,7 +33,11 @@
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment> -->
-	<svelte:fragment slot="sidebarLeft"><Preferences /></svelte:fragment>
+	<svelte:fragment slot="sidebarLeft">
+		<div>
+			<Preferences />
+		</div>
+	</svelte:fragment>
 	<!-- Page Route Content -->
 	<slot />
 </AppShell>

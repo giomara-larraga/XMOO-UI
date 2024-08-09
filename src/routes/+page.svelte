@@ -16,7 +16,7 @@
 	let ideal: number[] | undefined;
 	let nadir: number[] | undefined;
 	let objective_names: string[];
-	let short_names:  string[];
+	let short_names: string[];
 	let decimal_places: number;
 	let selected_objective: number[];
 	let approximated_solution: number[];
@@ -69,7 +69,6 @@
 		}
 	};
 
-
 	onMount(() => {
 		getDetails();
 		selected_objective = [-1];
@@ -80,61 +79,56 @@
 	{#if fx == undefined}
 		<p>Click on compute to see results</p>
 	{:else}
-		<div class="grid grid-cols-2 gap-2">
-			<div class="card" style="width:60vh; background-color:white">
-				<header class="card-header h5">Obtained solution</header>
-				<section style="height:40vh; width:60vh">
-					<RadarChart indicatorNames={short_names} values={[fx, approximated_solution]} />
-				</section>
-			</div>
-			<div class="card" style="width:60vh; background-color:white">
-				<header class="card-header h5">Influence from each objective</header>
-				<section style="height:40vh; width:60vh">
-					<BarChart
-						indicatorNames={short_names}
-						values={lagrangeMultipliers}
-						maxSelections={1}
-						bind:selectedIndices={selected_objective}
-					></BarChart>
-				</section>
-			</div>
-		</div>
-		<div class="grid grid-cols-2 gap-2">
-			<div class="card" style="width:60vh; background-color:white">
-				<header class="card-header h5">
-					Partial tradeoffs for objective {short_names[selected_objective[0]]}
-				</header>
-				<section style="height:40vh; width:60vh">
-					{#if selected_objective != undefined && selected_objective[0] > -1}
-						<BarChartHorizontal
-							values={partialTradeoffs[selected_objective[0]]}
+		<div class="grid gap-y-4 grid-rows-2">
+			<div class="grid gap-x-4 grid-cols-2">
+				<div class="card" style="background-color:white">
+					<header class="card-header h5">Obtained solution</header>
+					<section style="height:40vh; width:60wh">
+						<RadarChart indicatorNames={short_names} values={[fx, approximated_solution]} />
+					</section>
+				</div>
+				<div class="card" style="background-color:white">
+					<header class="card-header h5">Influence from each objective</header>
+					<section style="height:40vh; width:60wh">
+						<BarChart
 							indicatorNames={short_names}
+							values={lagrangeMultipliers}
+							maxSelections={1}
 							bind:selectedIndices={selected_objective}
-						></BarChartHorizontal>
-					{/if}
-				</section>
+						></BarChart>
+					</section>
+				</div>
 			</div>
-			<div class="card" style="width:60vh; background-color:white">
-				<header class="card-header h5">Analysis</header>
-				<section
-					class="p-4"
-					style="height:40vh; width:60vh; text-wrap: balance;overflow-wrap: break-word;"
-				>
-				<DynamicTable
-				title="History of solutions"
-				tableHeader={short_names}
-				tableData={history_solutions}
-				decimalPlaces={decimal_places}
-			></DynamicTable>
-				</section>
+			<div class="grid gap-x-4 grid-cols-2">
+				<div class="card" style="background-color:white">
+					<header class="card-header h5">
+						Partial tradeoffs for objective {short_names[selected_objective[0]]}
+					</header>
+					<section style="height:40vh; width:60wh">
+						{#if selected_objective != undefined && selected_objective[0] > -1}
+							<BarChartHorizontal
+								values={partialTradeoffs[selected_objective[0]]}
+								indicatorNames={short_names}
+								bind:selectedIndices={selected_objective}
+							></BarChartHorizontal>
+						{/if}
+					</section>
+				</div>
+				<div class="card" style="background-color:white">
+					<header class="card-header h5">Analysis</header>
+					<section
+						class="p-4"
+						style="height:40vh; width:60wh; text-wrap: balance;overflow-wrap: break-word;"
+					>
+						<DynamicTable
+							title="History of solutions"
+							tableHeader={short_names}
+							tableData={history_solutions}
+							decimalPlaces={decimal_places}
+						></DynamicTable>
+					</section>
+				</div>
 			</div>
 		</div>
-		<!-- 		<DynamicTable
-			title="Trade offs"
-			tableHeader={objective_names}
-			tableData={partialTradeoffs}
-			decimalPlaces={decimal_places}
-		></DynamicTable>
-		<TableTradeoffs></TableTradeoffs> -->
 	{/if}
 </div>

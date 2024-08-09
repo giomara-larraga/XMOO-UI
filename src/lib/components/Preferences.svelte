@@ -46,7 +46,7 @@
 				lagrangeMultipliers: response.data.lagrange_multipliers,
 				partialTradeoffs: response.data.partial_tradeoffs,
 				fx: response.data.fx,
-				history_solutions: [...state.history_solutions, response.data.fx],				
+				history_solutions: [...state.history_solutions, response.data.fx],
 				approximated_solution: []
 			}));
 			// Format each value in fx to the specified number of decimal places
@@ -93,17 +93,17 @@
 		//console.log('potential reference point', potential_reference_point);
 		//console.log('current reference point', current_reference_point);
 	}
-	function getObjectivesToImproveImpair(potential_rp: number[], fx: number[]| undefined) {
+	function getObjectivesToImproveImpair(potential_rp: number[], fx: number[] | undefined) {
 		const result: string[] = [];
-		if (fx!=undefined){
-		for (let index = 0; index < potential_rp.length; index++) {
-			if (potential_rp[index] > fx[index]) {
-				result.push('Improve');
-			} else if (potential_rp[index] < fx[index]) {
-				result.push('Impair');
-			} else {
-				result.push('Keep');
-			}
+		if (fx != undefined) {
+			for (let index = 0; index < potential_rp.length; index++) {
+				if (potential_rp[index] > fx[index]) {
+					result.push('Improve');
+				} else if (potential_rp[index] < fx[index]) {
+					result.push('Impair');
+				} else {
+					result.push('Keep');
+				}
 			}
 		}
 		return result;
@@ -125,7 +125,10 @@
 			}));
 			approximated_solution = response.data.approximated_solution;
 			console.log('approximated', approximated_solution);
-			let toimproveimpar = getObjectivesToImproveImpair([...potential_reference_point], [...current_reference_point]);
+			let toimproveimpar = getObjectivesToImproveImpair(
+				[...potential_reference_point],
+				[...current_reference_point]
+			);
 			console.log(toimproveimpar);
 		} catch (error) {
 			console.error('Error fetching solution:', error);
@@ -133,20 +136,18 @@
 	};
 </script>
 
-<div class="container">
-	<h4 class="h4">Preference information</h4>
+<div>
+	<h5 class="h5 font-medium">Preference information</h5>
 	<br />
 	<form class="form">
 		<div class="grid-container">
 			{#each Array(num_objectives).fill(undefined) as _, index}
 				<div class="label">
-					<label for="reference-{index}">{$store.objective_names[index]} ({$store.short_names[index]})</label>
+					<label for="reference-{index}"
+						>{$store.objective_names[index]} ({$store.short_names[index]})</label
+					>
 				</div>
 				{#if ideal != undefined && nadir != undefined}
-				<div class="nadir text-sm">Nadir: {nadir[index].toFixed(decimal_places)}</div>
-					<div class="ideal text-sm">Ideal: {ideal[index].toFixed(decimal_places)}</div>
-					
-
 					<div class="slider self-center">
 						<input
 							type="range"
@@ -158,6 +159,11 @@
 							bind:value={potential_reference_point[index]}
 							on:input={() => updateReferencePoint(index, potential_reference_point[index])}
 						/>
+						<div class="slider-display">
+							<span>{nadir[index].toFixed(decimal_places)}</span><span>-</span>{ideal[
+								index
+							].toFixed(decimal_places)}<span></span>
+						</div>
 					</div>
 					<div class="input">
 						<input
@@ -172,40 +178,10 @@
 				{/if}
 			{/each}
 		</div>
+
 		<div>
 			<button class="btn" on:click={getSolution}>Get Solution</button>
 			<button class="btn" on:click={analyzeSolution}>Analyze</button>
 		</div>
 	</form>
 </div>
-
-<style>
-	.container {
-		max-width: 450px;
-		margin: auto;
-		padding: 1rem;
-	}
-
-	.grid-container {
-		display: grid;
-		gap: 1rem;
-		grid-template-columns: repeat(3, 1fr);
-	}
-
-	.label {
-		grid-column: span 3;
-	}
-
-	.slider {
-		grid-column: span 2;
-	}
-
-	.input {
-		grid-column: span 1;
-	}
-
-	.ideal,
-	.nadir {
-		grid-column: span 1;
-	}
-</style>

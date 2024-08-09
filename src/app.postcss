@@ -8,15 +8,54 @@ body {
 	@apply h-full overflow-hidden;
 }
 
-
 .btn {
-    @apply bg-primary-500 text-on-primary-token;
+	@apply bg-primary-500 text-on-primary-token;
 }
 
 .input {
 	@apply bg-white;
 }
 
-.input[type="range"]{
+.input[type='range'] {
 	@apply accent-primary-500;
+}
+
+.slider-display {
+	display: flex;
+	justify-content: space-around;
+	margin: -6px 10% 0;
+	font-size: 12px;
+}
+
+.grid-container {
+	display: grid;
+	gap: 1rem;
+	grid-template-columns: repeat(3, 1fr);
+	padding-bottom: 1rem;
+}
+
+.label {
+	grid-column: span 3;
+}
+
+.slider {
+	grid-column: span 2;
+}
+
+.input {
+	grid-column: span 1;
+}
+
+#sidebar-left {
+	width: 25%;
+	padding: 1rem;
+	box-sizing: border-box;
+}
+
+#page-content {
+	padding: 1rem;
+}
+
+.card-header {
+	font-weight: 500;
 }
