@@ -2,7 +2,8 @@ import { join } from 'path'
 import type { Config } from 'tailwindcss'
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
-import { skeleton } from '@skeletonlabs/tw-plugin'
+import { skeleton } from '@skeletonlabs/tw-plugin';
+import { myCustomTheme } from './custom-theme'
 
 export default {
 	darkMode: 'class',
@@ -14,7 +15,9 @@ export default {
 		forms,
 		typography,
 		skeleton({
-			themes: { preset: [ "gold-nouveau" ] }
+			themes: { custom: [
+				myCustomTheme
+			] }
 		}),
 	],
 } satisfies Config;

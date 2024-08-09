@@ -152,8 +152,8 @@
 			{/each}
 		</div>
 		<div>
-			<button class="btn variant-filled" on:click={getSolution}>Get Solution</button>
-			<button class="btn variant-filled" on:click={analyzeSolution}>Analyze</button>
+			<button class="btn" on:click={getSolution}>Get Solution</button>
+			<button class="btn" on:click={analyzeSolution}>Analyze</button>
 		</div>
 	</form>
 </div>

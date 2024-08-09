@@ -20,7 +20,7 @@
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "0.5.13",
     "@types/eslint": "^8.56.0",
-    "@types/node": "^20.14.12",
+    "@types/node": "^20.14.14",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "autoprefixer": "10.4.19",
@@ -45,6 +45,7 @@
     "axios": "^1.7.2",
     "echarts": "^5.5.1",
     "highlight.js": "11.10.0",
-    "unplugin-icons": "^0.12.8"
+    "unplugin-icons": "^0.12.8",
+    "yarn": "^1.22.22"
   }
 }

@@ -90,7 +90,7 @@
 			<div class="card" style="width:60vh; background-color:white">
 				<header class="card-header h5">Obtained solution</header>
 				<section style="height:40vh; width:60vh">
-					<RadarChart indicatorNames={objective_names} values={[fx]} />
+					<RadarChart indicatorNames={objective_names} values={[fx, approximated_solution]} />
 				</section>
 			</div>
 			<div class="card" style="width:60vh; background-color:white">

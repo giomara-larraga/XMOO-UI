@@ -49,14 +49,25 @@
 		});
 
 		// Create the series data for the radar chart.
-		let seriesData: { value: number[]; name: string; symbol: string }[] = [];
+
+		let seriesData: { value: number[]; name: string; symbol: string;}[] = [];
 		for (let i = 0; i < values.length; i++) {
-			seriesData.push({ value: values[i], name: 'Solution ' + (i + 1), symbol: 'rect' });
+			if (i ==0){
+				seriesData.push({ value: values[i].map(num => parseFloat(num.toFixed(5))), name: 'Obtained solution', symbol: 'circle'});
+			}
+			else {
+				if (values[i].length > 0){
+					seriesData.push({ value: values[i].map(num => parseFloat(num.toFixed(5))), name: 'Approximated solution', symbol: 'rect'});
+
+				}
+			}
 		}
 
 		// Create the option object for the whole chart.
 		option = {
 			tooltip: {},
+			color: ['#1f7095', '#07d2c9', '#56A3F1', '#FF917C'],
+			legend: {},
 			radar: {
 				shape: 'circle',
 				indicator: indObjects,
