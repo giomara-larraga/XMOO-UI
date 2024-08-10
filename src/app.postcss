@@ -14,10 +14,11 @@ body {
 
 .input {
 	@apply bg-white;
+	font-size: small;
 }
 
 .input[type='range'] {
-	@apply accent-primary-500;
+	@apply accent-primary-700;
 }
 
 .slider-display {
@@ -58,4 +59,33 @@ body {
 
 .card-header {
 	font-weight: 500;
+}
+
+.box {
+	float: left;
+	height: 20px;
+	width: 20px;
+	margin-bottom: 15px;
+	border: 1px solid black;
+	clear: both;
+	--tw-space-y-reverse: 0;
+	margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
+	margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
+	margin-right: 0.5rem;
+}
+
+.box-0 {
+	background-color: #5470c6;
+}
+
+.box-1 {
+	background-color: #91cc75;
+}
+
+.box-2 {
+	background-color: #fac858;
+}
+
+.box-3 {
+	background-color: #ee6666;
 }

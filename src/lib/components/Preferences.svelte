@@ -143,8 +143,10 @@
 		<div class="grid-container">
 			{#each Array(num_objectives).fill(undefined) as _, index}
 				<div class="label">
-					<label for="reference-{index}"
-						>{$store.objective_names[index]} ({$store.short_names[index]})</label
+					<div class="box box-{index}"></div>
+					<span> </span>
+					<label for="reference-{index}">
+						{$store.objective_names[index]} ({$store.short_names[index]})</label
 					>
 				</div>
 				{#if ideal != undefined && nadir != undefined}
