@@ -88,7 +88,7 @@
 					</section>
 				</div>
 				<div class="card" style="background-color:white">
-					<header class="card-header h5">Influence from each objective</header>
+					<header class="card-header h5">Impact of each objective</header>
 					<section style="height:40vh; width:60wh">
 						<BarChart
 							indicatorNames={short_names}
@@ -115,13 +115,13 @@
 					</section>
 				</div>
 				<div class="card" style="background-color:white">
-					<header class="card-header h5">Analysis</header>
+					<header class="card-header h5">History of solutions</header>
 					<section
 						class="p-4"
 						style="height:40vh; width:60wh; text-wrap: balance;overflow-wrap: break-word;"
 					>
 						<DynamicTable
-							title="History of solutions"
+							title=""
 							tableHeader={short_names}
 							tableData={history_solutions}
 							decimalPlaces={decimal_places}

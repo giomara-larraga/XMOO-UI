@@ -15,6 +15,7 @@
 	/** The names to use for the indicators (axis). */
 	export let indicatorNames: string[] = [];
 
+	export let selectedObjectiveName: string = "";
 	/** The indices of the selected items in the chart. */
 	export let selectedIndices: number[] = [];
 
@@ -46,7 +47,18 @@
 				trigger: 'axis',
 				axisPointer: {
 					type: 'shadow'
-				}
+				},
+				formatter: function(params:any) {
+					var value = params[0].data; // Assuming you want to check the first value in the axis
+					var impactText = value >= 0 ? 'improve' : 'impair'; // Adjust text based on positive or negative value
+					if (value == 1){
+						return 'This is the selected objective'
+					}
+					else{
+						return `Gaining one unit in ${indicatorNames[selectedIndices[0]]} will ${impactText} ${params[0].name} by ${Math.abs(value.toFixed(5))} units`;
+
+					}
+    			}			
 			},
 			xAxis: {
 				type: 'value',
