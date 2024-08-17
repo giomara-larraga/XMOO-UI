@@ -6,10 +6,26 @@
 html,
 body {
 	@apply h-full overflow-hidden;
+	@apply text-base;
 }
 
-.btn {
+.app-bar {
 	@apply bg-primary-500 text-on-primary-token;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.btn .variant-filled-primary {
+	@apply bg-primary-500 text-on-primary-token;
+}
+
+.select {
+	@apply bg-surface-100 text-on-surface-token;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+.btn .variant-filled-secondary {
+	@apply bg-secondary-500 text-on-secondary-token;
 }
 
 .input {
@@ -24,7 +40,7 @@ body {
 .slider-display {
 	display: flex;
 	justify-content: space-around;
-	margin: -6px 10% 0;
+	margin: -3px 10% 0;
 	font-size: 12px;
 }
 
@@ -63,8 +79,8 @@ body {
 
 .box {
 	float: left;
-	height: 20px;
-	width: 20px;
+	height: 16px;
+	width: 16px;
 	margin-bottom: 15px;
 	border: 1px solid black;
 	clear: both;

@@ -36,3 +36,6 @@ export const store = writable<StoreState>({
   approximated_solution: [],
   history_solutions: [],
 });
+
+export const selected_problem = writable<number>();
+export const selected_method = writable<number>();

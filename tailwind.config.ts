@@ -10,6 +10,11 @@ export default {
 	content: ['./src/**/*.{html,js,svelte,ts}', join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')],
 	theme: {
 		extend: {},
+		fontSize: {
+	
+			base: ['14px', '14px'],
+			
+		  }
 	},
 	plugins: [
 		forms,

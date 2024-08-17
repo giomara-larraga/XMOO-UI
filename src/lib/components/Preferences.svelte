@@ -182,8 +182,8 @@
 		</div>
 
 		<div>
-			<button class="btn" on:click={getSolution}>Get Solution</button>
-			<button class="btn" on:click={analyzeSolution}>Analyze</button>
+			<button class="btn variant-filled-primary" on:click={getSolution}>Get Solution</button>
+			<button class="btn variant-filled-primary" on:click={analyzeSolution}>Analyze</button>
 		</div>
 	</form>
 </div>
