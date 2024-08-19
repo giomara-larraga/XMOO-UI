@@ -11,23 +11,22 @@
 	let numObjectives: number;
 	let referencePoint: number[] = [];
 	let potentialReferencePoint: number[] = [];
-	let lagrangeMultipliers: number[];
-	let partialTradeoffs: number[][];
+	let explanations: string[];
+	let suggestions: string[];
 	let fx: number[] | undefined;
 	let ideal: number[] | undefined;
 	let nadir: number[] | undefined;
 	let objective_names: string[];
 	let short_names: string[];
 	let decimal_places: number;
-	let selected_objective: string ="";
-	let approximated_solution: number[];
+	let selected_objective: string = '';
 	let history_solutions: number[][];
 
 	let tabs = [
-    { label: 'Label 1', content: 'Tab panel 1 contents', value: 0 },
-    { label: 'Label 2', content: 'Tab panel 2 contents', value: 1 },
-    { label: 'Label 3', content: 'Tab panel 3 contents', value: 2 }
-  ];
+		{ label: 'Label 1', content: 'Tab panel 1 contents', value: 0 },
+		{ label: 'Label 2', content: 'Tab panel 2 contents', value: 1 },
+		{ label: 'Label 3', content: 'Tab panel 3 contents', value: 2 }
+	];
 
 	// Subscribe to the store
 	$: {
@@ -35,15 +34,14 @@
 		numObjectives = $store.numObjectives;
 		referencePoint = $store.referencePoint;
 		potentialReferencePoint = $store.potentialReferencePoint;
-		lagrangeMultipliers = $store.lagrangeMultipliers;
-		partialTradeoffs = $store.partialTradeoffs;
+		suggestions = $store.suggestions;
+		explanations = $store.explanations;
 		fx = $store.fx;
 		ideal = $store.ideal;
 		nadir = $store.nadir;
 		objective_names = $store.objective_names;
 		short_names = $store.short_names;
 		decimal_places = $store.decimal_places;
-		approximated_solution = $store.approximated_solution;
 		history_solutions = $store.history_solutions;
 	}
 </script>
@@ -57,7 +55,7 @@
 				<div class="card" style="background-color:white">
 					<header class="card-header h5">Solution(s)</header>
 					<section style="height:40vh; width:60wh">
-						<RadarChart indicatorNames={short_names} values={[fx, approximated_solution]} />
+						<RadarChart indicatorNames={short_names} values={[fx]} />
 					</section>
 				</div>
 				<div class="card" style="background-color:white">
@@ -65,26 +63,20 @@
 					<section style="height:40vh; width:60wh">
 						<TabGroup>
 							{#each short_names as name}
-							  <Tab bind:group={selected_objective} name={`tab${name}`} value={name}>
-								<span>{name}</span>
-							  </Tab>
+								<Tab bind:group={selected_objective} name={`tab${name}`} value={name}>
+									<span>{name}</span>
+								</Tab>
 							{/each}
-						
+
 							<!-- Tab Panels -->
 							<div slot="panel" class="p-4">
-							{#each short_names as name}
-							
-							  {#if selected_objective === name}
-								
-								  Suggestion and explanation for {name}
-								
-							  {/if}
-							
-							{/each}
-						</div>
-						  </TabGroup>
-			
-						  
+								{#each short_names as name}
+									{#if selected_objective === name}
+										Suggestion and explanation for {name}
+									{/if}
+								{/each}
+							</div>
+						</TabGroup>
 					</section>
 				</div>
 			</div>

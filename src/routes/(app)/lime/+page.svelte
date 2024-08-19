@@ -56,6 +56,7 @@
 			const response = await axios.post('http://127.0.0.1:5000/get_details_problem');
 			store.update((state) => ({
 				...state,
+				numObjectives: response.data.num_objectives,
 				ideal: response.data.ideal,
 				nadir: response.data.nadir,
 				objective_names: response.data.objective_names,

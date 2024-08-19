@@ -15,26 +15,32 @@ interface StoreState {
   decimal_places: number;
   approximated_solution: number[];
   history_solutions: number[][];
+  suggestions: string [];
+  explanations: string [];
+  method: string;
 }
 
 // Define the number of objectives
-const numObjectives = 4;
+//const numObjectives = 4;
 
 // Create a store with the defined state type
 export const store = writable<StoreState>({
-  numObjectives,
+  numObjectives:0,
   referencePoint: [],
   potentialReferencePoint: [],
-  lagrangeMultipliers: Array(numObjectives).fill(0),
-  partialTradeoffs: Array(numObjectives).fill(Array(numObjectives).fill(0)),
+  lagrangeMultipliers: [],
+  partialTradeoffs: [],
   fx: undefined,
   ideal: undefined,
   nadir: undefined,
-  objective_names: Array(numObjectives).fill("Objective"),
+  objective_names: [],
   short_names: [],
   decimal_places: 0,
   approximated_solution: [],
   history_solutions: [],
+  suggestions: [],
+  explanations: [],
+  method:"",
 });
 
 export const selected_problem = writable<number>();

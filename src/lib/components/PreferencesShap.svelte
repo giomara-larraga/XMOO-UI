@@ -35,30 +35,29 @@
 	const getSolution = async () => {
 		try {
 			// Get current reference point from the store
-			const response = await axios.post('http://127.0.0.1:5000/get_solution', {
+			const response = await axios.post('http://127.0.0.1:5000/shap_improve', {
 				reference_point: potential_reference_point
 			});
 
 			// Update the store with new data
 			store.update((state) => ({
 				...state,
-				lagrangeMultipliers: response.data.lagrange_multipliers,
-				partialTradeoffs: response.data.partial_tradeoffs,
-				fx: response.data.fx,
-				history_solutions: [...state.history_solutions, response.data.fx],
-				approximated_solution: []
+				fx: response.data.result,
+				suggestions: response.data.suggestions,
+				explanations: response.data.explanations,
+				history_solutions: [...state.history_solutions, response.data.result]
 			}));
 			// Format each value in fx to the specified number of decimal places
-			const newReferencePoint = response.data.fx.map((value: number) =>
+			const newReferencePoint = response.data.result.map((value: number) =>
 				parseFloat(value.toFixed(decimal_places))
 			);
 
-			const newReferencePoint2 = response.data.fx.map((value: number) =>
+			const newReferencePoint2 = response.data.result.map((value: number) =>
 				parseFloat(value.toFixed(decimal_places))
 			);
 
 			// Update referencePoint with the new fx values
-			if (response.data.fx) {
+			if (response.data.result) {
 				store.update((state) => {
 					//console.log('Updating current referencePoint to:', newReferencePoint);
 					return { ...state, referencePoint: newReferencePoint };
@@ -70,7 +69,6 @@
 				//const newReferencePoint = [...response.data.fx]; // Create a new array to ensure reactivity
 				potential_reference_point = newReferencePoint2;
 				current_reference_point = newReferencePoint;
-				approximated_solution = [];
 			}
 			console.log('current', current_reference_point);
 
@@ -92,27 +90,6 @@
 		//console.log('potential reference point', potential_reference_point);
 		//console.log('current reference point', current_reference_point);
 	}
-	const analyzeSolution = async () => {
-		try {
-			// Get current reference point from the store
-			const response = await axios.post('http://127.0.0.1:5000/approximate_solution', {
-				reference_point: [...current_reference_point],
-				new_reference_point: [...potential_reference_point],
-				multipliers: lagrange_multipliers,
-				num_objectives: num_objectives
-			});
-			console.log('approximating with:', current_reference_point, potential_reference_point);
-			// Update the store with new data
-			store.update((state) => ({
-				...state,
-				approximated_solution: response.data.approximated_solution
-			}));
-			approximated_solution = response.data.approximated_solution;
-			console.log('approximated', approximated_solution);
-		} catch (error) {
-			console.error('Error fetching solution:', error);
-		}
-	};
 </script>
 
 <div>
@@ -162,7 +139,6 @@
 
 		<div>
 			<button class="btn variant-filled-primary" on:click={getSolution}>Get Solution</button>
-			<button class="btn variant-filled-primary" on:click={analyzeSolution}>Analyze</button>
 		</div>
 	</form>
 </div>

@@ -2,10 +2,10 @@
 	import { onMount } from 'svelte';
 	import axios from 'axios';
 	import { store } from '$lib/store';
-	import Lime from '$lib/components/LIME.svelte';
 	import { AppShell } from '@skeletonlabs/skeleton';
 	import Preferences from '$lib/components/Preferences.svelte';
 	import Shap from '$lib/components/Shap.svelte';
+	import PreferencesShap from '$lib/components/PreferencesShap.svelte';
 
 	let numObjectives: number;
 	let referencePoint: number[] = [];
@@ -52,11 +52,12 @@
 	}
 
 	// Function to get solution and update the store
-	const getDetails = async () => {
+	const getDetailsShap = async () => {
 		try {
-			const response = await axios.post('http://127.0.0.1:5000/get_details_problem');
+			const response = await axios.post('http://127.0.0.1:5000/get_details_problem_shap');
 			store.update((state) => ({
 				...state,
+				numObjectives: response.data.num_objectives,
 				ideal: response.data.ideal,
 				nadir: response.data.nadir,
 				objective_names: response.data.objective_names,
@@ -69,13 +70,14 @@
 	};
 
 	onMount(() => {
-		getDetails();
+		getDetailsShap();
+		console.log(objective_names);
 	});
 </script>
 
 <AppShell>
 	<svelte:fragment slot="sidebarLeft">
-		<Preferences />
+		<PreferencesShap />
 	</svelte:fragment>
 	{#if fx == undefined}
 		<p>Click on compute to see results</p>
