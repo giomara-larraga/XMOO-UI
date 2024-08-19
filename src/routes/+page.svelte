@@ -1,79 +1,35 @@
-<script lang="ts">
-	import { onMount } from 'svelte';
-	import axios from 'axios';
-	import { store } from '$lib/store';
-	import Lime from '$lib/components/LIME.svelte';
-
-	let numObjectives: number;
-	let referencePoint: number[] = [];
-	let potentialReferencePoint: number[] = [];
-	let lagrangeMultipliers: number[];
-	let partialTradeoffs: number[][];
-	let fx: number[] | undefined;
-	let ideal: number[] | undefined;
-	let nadir: number[] | undefined;
-	let objective_names: string[];
-	let short_names: string[];
-	let decimal_places: number;
-	let approximated_solution: number[];
-	let history_solutions: number[][];
-
-	// Subscribe to the store
-	$: {
-		$store;
-		numObjectives = $store.numObjectives;
-		referencePoint = $store.referencePoint;
-		potentialReferencePoint = $store.potentialReferencePoint;
-		lagrangeMultipliers = $store.lagrangeMultipliers;
-		partialTradeoffs = $store.partialTradeoffs;
-		fx = $store.fx;
-		ideal = $store.ideal;
-		nadir = $store.nadir;
-		objective_names = $store.objective_names;
-		short_names = $store.short_names;
-		decimal_places = $store.decimal_places;
-		approximated_solution = $store.approximated_solution;
-		history_solutions = $store.history_solutions;
-	}
-
-	// Initialize referencePoint with the same values as ideal if undefined
-	$: {
-		if (referencePoint.length === 0 && ideal) {
-			referencePoint = [...ideal];
-			store.update((state) => ({ ...state, referencePoint: referencePoint }));
-		}
-		if (potentialReferencePoint.length === 0 && ideal) {
-			potentialReferencePoint = [...ideal];
-			store.update((state) => ({ ...state, potentialReferencePoint: potentialReferencePoint }));
-		}
-	}
-
-	// Function to get solution and update the store
-	const getDetails = async () => {
-		try {
-			const response = await axios.post('http://127.0.0.1:5000/get_details_problem');
-			store.update((state) => ({
-				...state,
-				ideal: response.data.ideal,
-				nadir: response.data.nadir,
-				objective_names: response.data.objective_names,
-				short_names: response.data.short_names,
-				decimal_places: response.data.decimal_places
-			}));
-		} catch (error) {
-			console.error('Error fetching details:', error);
-		}
-	};
-
-	onMount(() => {
-		getDetails();
-	});
-</script>
-
-<div>
-	{#if fx == undefined}
-		<p>Click on compute to see results</p>
-	{:else}
-		<Lime></Lime>
-	{/if}
-</div>
+<script>
+    import { goto } from '$app/navigation';
+    import { page, navigating } from '$app/stores';
+    import '../app.postcss';
+    let selectedRoute = '';
+  
+    /**
+	 * @param {{ preventDefault: () => void; }} event
+	 */
+    function handleSelection(event) {
+      event.preventDefault();
+      if (selectedRoute) {
+        goto(selectedRoute);
+      }
+    }
+  </script>
+  
+  <style>
+    /* You can add any additional custom styles here if needed */
+  </style>
+  
+  <div class="flex flex-col items-center justify-center h-screen bg-gray-100">
+    <h1 class="text-4xl font-bold mb-6">Choose Your Route</h1>
+    <form class="space-y-4" on:submit={handleSelection}>
+      <select class="form-select block w-64 p-2.5 text-lg border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" bind:value={selectedRoute} required>
+        <option value="" disabled>Select a route</option>
+        <option value="/lime">Lime</option>
+        <option value="/shap">Shape</option>
+      </select>
+      <button type="submit" class="btn btn-primary w-32 py-2 text-white bg-blue-500 rounded-md shadow-sm hover:bg-blue-600 focus:ring-4 focus:ring-blue-300">
+        Go
+      </button>
+    </form>
+  </div>
+  

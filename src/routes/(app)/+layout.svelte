@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '../app.postcss';
+	import '../../app.postcss';
 	import {
 		AppShell,
 		AppBar,
@@ -48,11 +48,7 @@
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
-	<svelte:fragment slot="sidebarLeft">
-		<div>
-			<Preferences />
-		</div>
-	</svelte:fragment>
+	<svelte:fragment slot="sidebarLeft" />
 	<!-- Page Route Content -->
 	<slot />
 </AppShell>
