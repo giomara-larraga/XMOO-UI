@@ -22,12 +22,6 @@
 	let selected_objective: string = '';
 	let history_solutions: number[][];
 
-	let tabs = [
-		{ label: 'Label 1', content: 'Tab panel 1 contents', value: 0 },
-		{ label: 'Label 2', content: 'Tab panel 2 contents', value: 1 },
-		{ label: 'Label 3', content: 'Tab panel 3 contents', value: 2 }
-	];
-
 	// Subscribe to the store
 	$: {
 		$store;
@@ -70,9 +64,11 @@
 
 							<!-- Tab Panels -->
 							<div slot="panel" class="p-4">
-								{#each short_names as name}
+								{#each short_names as name, i}
 									{#if selected_objective === name}
 										Suggestion and explanation for {name}
+										<p>{suggestions[i]}</p>
+										<p>{explanations[i]}</p>
 									{/if}
 								{/each}
 							</div>
