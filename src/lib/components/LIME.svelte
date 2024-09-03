@@ -6,6 +6,8 @@
 	import BarChart from '$lib/components/visual/BarChart.svelte';
 	import DynamicTable from '$lib/components/DynamicTable.svelte';
 	import BarChartHorizontal from '$lib/components/visual/BarChartHorizontal.svelte';
+	import type { RadarChartData } from '$lib/components/visual/RadarD3.svelte';
+	import RadarD3 from '$lib/components/visual/RadarD3.svelte';
 
 	let numObjectives: number;
 	let referencePoint: number[] = [];
@@ -21,7 +23,13 @@
 	let selected_objective: number[];
 	let approximated_solution: number[];
 	let history_solutions: number[][];
-
+	const data1: RadarChartData[] = [
+		{ label: 'Metric 1', value: 70 },
+		{ label: 'Metric 2', value: 60 },
+		{ label: 'Metric 3', value: 80 },
+		{ label: 'Metric 4', value: 90 },
+		{ label: 'Metric 5', value: 100 }
+	];
 	// Subscribe to the store
 	$: {
 		$store;
@@ -51,8 +59,10 @@
 			<div class="grid gap-x-4 grid-cols-2">
 				<div class="card" style="background-color:white">
 					<header class="card-header h5">Solution(s)</header>
-					<section style="height:40vh; width:60wh">
-						<RadarChart indicatorNames={short_names} values={[fx, approximated_solution]} />
+					<section
+						style="height:40vh; width:60wh; display:flex; flex-direction:column; align-items:center"
+					>
+						<RadarD3 data={data1} width={300} height={300} color="red" />
 					</section>
 				</div>
 				<div class="card" style="background-color:white">
