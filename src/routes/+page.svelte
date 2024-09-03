@@ -22,7 +22,8 @@
 		>
 			<option value="" disabled>Select a route</option>
 			<option value="/lime">Lime</option>
-			<option value="/shap">Shape</option>
+			<option value="/shap">Shap</option>
+			<option value="/interactivized">Interactivized</option>
 		</select>
 		<button
 			type="submit"
