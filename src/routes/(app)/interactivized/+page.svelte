@@ -6,6 +6,8 @@
 	import { AppShell } from '@skeletonlabs/skeleton';
 	import Preferences from '$lib/components/Preferences.svelte';
 	import SideBarInteractivized from '$lib/components/SideBarInteractivized.svelte';
+	import IntegratedInterface from '$lib/components/IntegratedInterface.svelte';
+	import NumericalData from '$lib/components/NumericalData.svelte';
 
 	let numObjectives: number;
 	let referencePoint: number[] = [];
@@ -81,6 +83,7 @@
 	{#if fx == undefined}
 		<p>Click on compute to see results</p>
 	{:else}
-		<Lime></Lime>
+		<IntegratedInterface></IntegratedInterface>
 	{/if}
+	<svelte:fragment slot="pageFooter"><NumericalData /></svelte:fragment>
 </AppShell>
